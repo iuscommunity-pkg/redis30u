@@ -3,8 +3,10 @@
 
 %if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
 %global with_systemd 1
+%global with_procps_ng 1
 %else
 %global with_systemd 0
+%global with_procps_ng 0
 %endif
 
 # Tests fail in mock, not in local build.
@@ -49,7 +51,11 @@ BuildRequires:     jemalloc-devel
 %endif # with_perftools
 
 %if 0%{?with_tests}
+%if 0%{?with_procps_ng}
 BuildRequires:     procps-ng
+%else
+BuildRequires:     procps
+%endif # with_procps_ng
 %endif # with_tests
 
 %if 0%{?with_systemd}
