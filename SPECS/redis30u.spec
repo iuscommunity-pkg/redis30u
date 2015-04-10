@@ -16,6 +16,9 @@ Name:              redis
 Version:           3.0.0
 Release:           1%{?dist}
 Summary:           A persistent key-value database
+%if 0%{?rhel} <= 6
+Group:             Applications/Databases
+%endif
 License:           BSD
 URL:               http://redis.io
 
