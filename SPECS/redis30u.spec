@@ -165,13 +165,13 @@ install -pm644 %{S:2} %{buildroot}%{_unitdir}
 # Install systemd tmpfiles config.
 install -pDm644 %{S:4} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 # Install systemd limit files (requires systemd >= 204)
-install -p -D -m 644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{name}.service.d/limit.conf
-install -p -D -m 644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{name}-sentinel.service.d/limit.conf
+install -pDm644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{name}.service.d/limit.conf
+install -pDm644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{name}-sentinel.service.d/limit.conf
 %else
 # Install SysV service files.
 install -pDm755 %{S:5} %{buildroot}%{_initrddir}/%{name}-sentinel
 install -pDm755 %{S:6} %{buildroot}%{_initrddir}/%{name}
-install -p -D -m 644 %{S:9} %{buildroot}%{_sysconfdir}/security/limits.d/95-%{name}.conf
+install -pDm644 %{S:9} %{buildroot}%{_sysconfdir}/security/limits.d/95-%{name}.conf
 %endif # with_systemd
 
 # Fix non-standard-executable-perm error.
