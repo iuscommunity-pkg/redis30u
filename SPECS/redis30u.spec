@@ -46,19 +46,19 @@ Patch0005:            0005-redis-2.8.18-sentinel-configuration-file-fix.patch
 BuildRequires:     gperftools-devel
 %else
 BuildRequires:     jemalloc-devel
-%endif
+%endif # with_perftools
 
 %if 0%{?with_tests}
 BuildRequires:     procps-ng
-%endif
+%endif # with_tests
 
 %if 0%{?with_systemd}
 BuildRequires:     systemd
-%endif
+%endif # with_systemd
 
 %if 0%{?with_tests}
 BuildRequires:     tcl
-%endif
+%endif # with_tests
 # Required for redis-shutdown
 Requires:          /bin/awk
 Requires:          logrotate
@@ -73,7 +73,7 @@ Requires(post):    chkconfig
 Requires(preun):   chkconfig
 Requires(preun):   initscripts
 Requires(postun):  initscripts
-%endif
+%endif # with_systemd
 
 
 %description
@@ -134,7 +134,7 @@ make %{?_smp_mflags} \
     MALLOC=tcmalloc \
 %else
     MALLOC=jemalloc \
-%endif
+%endif # with_perftools
     all
 
 
@@ -168,7 +168,7 @@ install -p -D -m 644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{name}-se
 install -pDm755 %{S:5} %{buildroot}%{_initrddir}/%{name}-sentinel
 install -pDm755 %{S:6} %{buildroot}%{_initrddir}/%{name}
 install -p -D -m 644 %{S:9} %{buildroot}%{_sysconfdir}/security/limits.d/95-%{name}.conf
-%endif
+%endif # with_systemd
 
 # Fix non-standard-executable-perm error.
 chmod 755 %{buildroot}%{_bindir}/%{name}-*
@@ -184,7 +184,7 @@ install -pDm755 %{S:7} %{buildroot}%{_bindir}/%{name}-shutdown
 %if 0%{?with_tests}
 make test ||:
 make test-sentinel ||:
-%endif
+%endif # with_tests
 
 
 %pre
@@ -203,7 +203,7 @@ exit 0
 %else
 chkconfig --add %{name}
 chkconfig --add %{name}-sentinel
-%endif
+%endif # with_systemd
 
 
 %preun
@@ -217,7 +217,7 @@ if [ $1 -eq 0 ] ; then
     service %{name}-sentinel stop &> /dev/null
     chkconfig --del %{name}-sentinel &> /dev/null
 fi
-%endif
+%endif # with_systemd
 
 
 %postun
@@ -229,7 +229,7 @@ if [ "$1" -ge "1" ] ; then
     service %{name} condrestart >/dev/null 2>&1 || :
     service %{name}-sentinel condrestart >/dev/null 2>&1 || :
 fi
-%endif
+%endif # with_systemd
 
 
 %files
@@ -255,7 +255,7 @@ fi
 %{_initrddir}/%{name}
 %{_initrddir}/%{name}-sentinel
 %config(noreplace) %{_sysconfdir}/security/limits.d/95-%{name}.conf
-%endif
+%endif # with_systemd
 
 
 %changelog
