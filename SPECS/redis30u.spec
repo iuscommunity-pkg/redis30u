@@ -51,6 +51,7 @@ BuildRequires:     jemalloc-devel
 %endif # with_perftools
 
 %if 0%{?with_tests}
+BuildRequires:     tcl
 %if 0%{?with_procps_ng}
 BuildRequires:     procps-ng
 %else
@@ -62,9 +63,6 @@ BuildRequires:     procps
 BuildRequires:     systemd
 %endif # with_systemd
 
-%if 0%{?with_tests}
-BuildRequires:     tcl
-%endif # with_tests
 # Required for redis-shutdown
 Requires:          /bin/awk
 Requires:          logrotate
