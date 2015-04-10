@@ -1,3 +1,5 @@
+%global real_name redis
+%global ius_suffix 30u
 %global _hardened_build 1
 %global with_perftools 0
 
@@ -12,9 +14,9 @@
 # Tests fail in mock, not in local build.
 %global with_tests   %{?_with_tests:1}%{!?_with_tests:0}
 
-Name:              redis
+Name:              %{real_name}%{ius_suffix}
 Version:           3.0.0
-Release:           1%{?dist}
+Release:           1.ius%{?dist}
 Summary:           A persistent key-value database
 %if 0%{?rhel} <= 6
 Group:             Applications/Databases
@@ -22,16 +24,16 @@ Group:             Applications/Databases
 License:           BSD
 URL:               http://redis.io
 
-Source0:           http://download.redis.io/releases/%{name}-%{version}.tar.gz
-Source1:           %{name}.logrotate
-Source2:           %{name}-sentinel.service
-Source3:           %{name}.service
-Source4:           %{name}.tmpfiles
-Source5:           %{name}-sentinel.init
-Source6:           %{name}.init
-Source7:           %{name}-shutdown
-Source8:           %{name}-limit-systemd
-Source9:           %{name}-limit-init
+Source0:           http://download.redis.io/releases/%{real_name}-%{version}.tar.gz
+Source1:           %{real_name}.logrotate
+Source2:           %{real_name}-sentinel.service
+Source3:           %{real_name}.service
+Source4:           %{real_name}.tmpfiles
+Source5:           %{real_name}-sentinel.init
+Source6:           %{real_name}.init
+Source7:           %{real_name}-shutdown
+Source8:           %{real_name}-limit-systemd
+Source9:           %{real_name}-limit-init
 
 # To refresh patches:
 # tar xf redis-xxx.tar.gz && cd redis-xxx && git init && git add . && git commit -m "%{version} baseline"
@@ -82,6 +84,11 @@ Requires(preun):   initscripts
 Requires(postun):  initscripts
 %endif # with_systemd
 
+Provides: %{real_name} = %{version}-%{release}
+Provides: %{real_name}%{?_isa} = %{version}-%{release}
+Provides: config(%{real_name}) = %{version}-%{release}
+Conflicts: %{real_name} < %{version}
+
 
 %description
 Redis is an advanced key-value store. It is often referred to as a data 
@@ -110,7 +117,7 @@ You can use Redis from most programming languages also.
 
 
 %prep
-%setup -q
+%setup -q -n %{real_name}-%{version}
 rm -frv deps/jemalloc
 %patch0001 -p1
 %patch0002 -p1
@@ -149,16 +156,16 @@ make %{?_smp_mflags} \
 make install INSTALL="install -p" PREFIX=%{buildroot}%{_prefix}
 
 # Filesystem.
-install -d %{buildroot}%{_sharedstatedir}/%{name}
-install -d %{buildroot}%{_localstatedir}/log/%{name}
-install -d %{buildroot}%{_localstatedir}/run/%{name}
+install -d %{buildroot}%{_sharedstatedir}/%{real_name}
+install -d %{buildroot}%{_localstatedir}/log/%{real_name}
+install -d %{buildroot}%{_localstatedir}/run/%{real_name}
 
 # Install logrotate file.
-install -pDm644 %{S:1} %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+install -pDm644 %{S:1} %{buildroot}%{_sysconfdir}/logrotate.d/%{real_name}
 
 # Install configuration files.
-install -pDm644 %{name}.conf %{buildroot}%{_sysconfdir}/%{name}.conf
-install -pDm644 sentinel.conf %{buildroot}%{_sysconfdir}/%{name}-sentinel.conf
+install -pDm644 %{real_name}.conf %{buildroot}%{_sysconfdir}/%{real_name}.conf
+install -pDm644 sentinel.conf %{buildroot}%{_sysconfdir}/%{real_name}-sentinel.conf
 
 %if 0%{?with_systemd}
 # Install Systemd unit files.
@@ -166,26 +173,26 @@ mkdir -p %{buildroot}%{_unitdir}
 install -pm644 %{S:3} %{buildroot}%{_unitdir}
 install -pm644 %{S:2} %{buildroot}%{_unitdir}
 # Install systemd tmpfiles config.
-install -pDm644 %{S:4} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -pDm644 %{S:4} %{buildroot}%{_tmpfilesdir}/%{real_name}.conf
 # Install systemd limit files (requires systemd >= 204)
-install -pDm644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{name}.service.d/limit.conf
-install -pDm644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{name}-sentinel.service.d/limit.conf
+install -pDm644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{real_name}.service.d/limit.conf
+install -pDm644 %{S:8} %{buildroot}%{_sysconfdir}/systemd/system/%{real_name}-sentinel.service.d/limit.conf
 %else
 # Install SysV service files.
-install -pDm755 %{S:5} %{buildroot}%{_initrddir}/%{name}-sentinel
-install -pDm755 %{S:6} %{buildroot}%{_initrddir}/%{name}
-install -pDm644 %{S:9} %{buildroot}%{_sysconfdir}/security/limits.d/95-%{name}.conf
+install -pDm755 %{S:5} %{buildroot}%{_initrddir}/%{real_name}-sentinel
+install -pDm755 %{S:6} %{buildroot}%{_initrddir}/%{real_name}
+install -pDm644 %{S:9} %{buildroot}%{_sysconfdir}/security/limits.d/95-%{real_name}.conf
 %endif # with_systemd
 
 # Fix non-standard-executable-perm error.
-chmod 755 %{buildroot}%{_bindir}/%{name}-*
+chmod 755 %{buildroot}%{_bindir}/%{real_name}-*
 
 # create redis-sentinel command as described on
 # http://redis.io/topics/sentinel
-ln -sf %{name}-server %{buildroot}%{_bindir}/%{name}-sentinel
+ln -sf %{real_name}-server %{buildroot}%{_bindir}/%{real_name}-sentinel
 
 # Install redis-shutdown
-install -pDm755 %{S:7} %{buildroot}%{_bindir}/%{name}-shutdown
+install -pDm755 %{S:7} %{buildroot}%{_bindir}/%{real_name}-shutdown
 
 %check
 %if 0%{?with_tests}
@@ -195,46 +202,46 @@ make test-sentinel ||:
 
 
 %pre
-getent group %{name} &> /dev/null || \
-groupadd -r %{name} &> /dev/null
-getent passwd %{name} &> /dev/null || \
-useradd -r -g %{name} -d %{_sharedstatedir}/%{name} -s /sbin/nologin \
--c 'Redis Database Server' %{name} &> /dev/null
+getent group %{real_name} &> /dev/null || \
+groupadd -r %{real_name} &> /dev/null
+getent passwd %{real_name} &> /dev/null || \
+useradd -r -g %{real_name} -d %{_sharedstatedir}/%{real_name} -s /sbin/nologin \
+-c 'Redis Database Server' %{real_name} &> /dev/null
 exit 0
 
 
 %post
 %if 0%{?with_systemd}
-%systemd_post %{name}.service
-%systemd_post %{name}-sentinel.service
+%systemd_post %{real_name}.service
+%systemd_post %{real_name}-sentinel.service
 %else
-chkconfig --add %{name}
-chkconfig --add %{name}-sentinel
+chkconfig --add %{real_name}
+chkconfig --add %{real_name}-sentinel
 %endif # with_systemd
 
 
 %preun
 %if 0%{?with_systemd}
-%systemd_preun %{name}.service
-%systemd_preun %{name}-sentinel.service
+%systemd_preun %{real_name}.service
+%systemd_preun %{real_name}-sentinel.service
 %else
 if [ $1 -eq 0 ] ; then
-    service %{name} stop &> /dev/null
-    chkconfig --del %{name} &> /dev/null
-    service %{name}-sentinel stop &> /dev/null
-    chkconfig --del %{name}-sentinel &> /dev/null
+    service %{real_name} stop &> /dev/null
+    chkconfig --del %{real_name} &> /dev/null
+    service %{real_name}-sentinel stop &> /dev/null
+    chkconfig --del %{real_name}-sentinel &> /dev/null
 fi
 %endif # with_systemd
 
 
 %postun
 %if 0%{?with_systemd}
-%systemd_postun_with_restart %{name}.service
-%systemd_postun_with_restart %{name}-sentinel.service
+%systemd_postun_with_restart %{real_name}.service
+%systemd_postun_with_restart %{real_name}-sentinel.service
 %else
 if [ "$1" -ge "1" ] ; then
-    service %{name} condrestart >/dev/null 2>&1 || :
-    service %{name}-sentinel condrestart >/dev/null 2>&1 || :
+    service %{real_name} condrestart >/dev/null 2>&1 || :
+    service %{real_name}-sentinel condrestart >/dev/null 2>&1 || :
 fi
 %endif # with_systemd
 
@@ -243,25 +250,25 @@ fi
 %{!?_licensedir:%global license %%doc}
 %license COPYING
 %doc 00-RELEASENOTES BUGS CONTRIBUTING MANIFESTO README
-%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%attr(0644, redis, root) %config(noreplace) %{_sysconfdir}/%{name}.conf
-%attr(0644, redis, root) %config(noreplace) %{_sysconfdir}/%{name}-sentinel.conf
-%dir %attr(0755, redis, redis) %{_sharedstatedir}/%{name}
-%dir %attr(0755, redis, redis) %{_localstatedir}/log/%{name}
-%dir %attr(0755, redis, redis) %{_localstatedir}/run/%{name}
-%{_bindir}/%{name}-*
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{real_name}
+%attr(0644, redis, root) %config(noreplace) %{_sysconfdir}/%{real_name}.conf
+%attr(0644, redis, root) %config(noreplace) %{_sysconfdir}/%{real_name}-sentinel.conf
+%dir %attr(0755, redis, redis) %{_sharedstatedir}/%{real_name}
+%dir %attr(0755, redis, redis) %{_localstatedir}/log/%{real_name}
+%dir %attr(0755, redis, redis) %{_localstatedir}/run/%{real_name}
+%{_bindir}/%{real_name}-*
 %if 0%{?with_systemd}
-%{_tmpfilesdir}/%{name}.conf
-%{_unitdir}/%{name}.service
-%{_unitdir}/%{name}-sentinel.service
-%dir %{_sysconfdir}/systemd/system/%{name}.service.d
-%config(noreplace) %{_sysconfdir}/systemd/system/%{name}.service.d/limit.conf
-%dir %{_sysconfdir}/systemd/system/%{name}-sentinel.service.d
-%config(noreplace) %{_sysconfdir}/systemd/system/%{name}-sentinel.service.d/limit.conf
+%{_tmpfilesdir}/%{real_name}.conf
+%{_unitdir}/%{real_name}.service
+%{_unitdir}/%{real_name}-sentinel.service
+%dir %{_sysconfdir}/systemd/system/%{real_name}.service.d
+%config(noreplace) %{_sysconfdir}/systemd/system/%{real_name}.service.d/limit.conf
+%dir %{_sysconfdir}/systemd/system/%{real_name}-sentinel.service.d
+%config(noreplace) %{_sysconfdir}/systemd/system/%{real_name}-sentinel.service.d/limit.conf
 %else
-%{_initrddir}/%{name}
-%{_initrddir}/%{name}-sentinel
-%config(noreplace) %{_sysconfdir}/security/limits.d/95-%{name}.conf
+%{_initrddir}/%{real_name}
+%{_initrddir}/%{real_name}-sentinel
+%config(noreplace) %{_sysconfdir}/security/limits.d/95-%{real_name}.conf
 %endif # with_systemd
 
 
