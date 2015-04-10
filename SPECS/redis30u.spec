@@ -272,6 +272,11 @@ fi
 
 
 %changelog
+* Fri Apr 10 2015 Carl George <carl.george@rackspace.com> - 3.0.0-1.ius
+- Port from Fedora to IUS
+- Use procps-ng on EL7 only
+- Enforce test suite
+
 * Thu Apr  2 2015 Haïkel Guémar <hguemar@fedoraproject.org> - 3.0.0-1
 - Upstream 3.0.0 (RHBZ #1208322)
 
