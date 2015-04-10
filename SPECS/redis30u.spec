@@ -11,8 +11,7 @@
 %global with_procps_ng 0
 %endif
 
-# Tests fail in mock, not in local build.
-%global with_tests   %{?_with_tests:1}%{!?_with_tests:0}
+%global with_tests 1
 
 Name:              %{real_name}%{ius_suffix}
 Version:           3.0.0
@@ -196,8 +195,8 @@ install -pDm755 %{S:7} %{buildroot}%{_bindir}/%{real_name}-shutdown
 
 %check
 %if 0%{?with_tests}
-make test ||:
-make test-sentinel ||:
+make test
+make test-sentinel
 %endif # with_tests
 
 
