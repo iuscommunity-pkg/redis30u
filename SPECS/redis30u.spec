@@ -193,6 +193,7 @@ ln -sf %{real_name}-server %{buildroot}%{_bindir}/%{real_name}-sentinel
 # Install redis-shutdown
 install -pDm755 %{S:7} %{buildroot}%{_bindir}/%{real_name}-shutdown
 
+
 %check
 %if 0%{?with_tests}
 make test
