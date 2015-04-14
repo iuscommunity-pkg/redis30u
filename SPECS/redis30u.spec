@@ -277,6 +277,7 @@ fi
 - Port from Fedora to IUS
 - Use procps-ng on EL7 only
 - Enforce test suite
+- Ensure sentinel log gets rotated (Remi Collet)
 
 * Thu Apr  2 2015 Haïkel Guémar <hguemar@fedoraproject.org> - 3.0.0-1
 - Upstream 3.0.0 (RHBZ #1208322)
