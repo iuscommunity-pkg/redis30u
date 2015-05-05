@@ -14,7 +14,7 @@
 %global with_tests 1
 
 Name:              %{real_name}%{ius_suffix}
-Version:           3.0.0
+Version:           3.0.1
 Release:           1.ius%{?dist}
 Summary:           A persistent key-value database
 %if 0%{?rhel} <= 6
@@ -273,6 +273,9 @@ fi
 
 
 %changelog
+* Tue May 05 2015 Carl George <carl.george@rackspace.com> - 3.0.1-1.ius
+- Latest upstream
+
 * Fri Apr 10 2015 Carl George <carl.george@rackspace.com> - 3.0.0-1.ius
 - Port from Fedora to IUS
 - Use procps-ng on EL7 only
