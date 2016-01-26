@@ -14,7 +14,7 @@
 %global with_tests 1
 
 Name:              %{real_name}%{ius_suffix}
-Version:           3.0.6
+Version:           3.0.7
 Release:           1.ius%{?dist}
 Summary:           A persistent key-value database
 %if 0%{?rhel} <= 6
@@ -273,6 +273,9 @@ fi
 
 
 %changelog
+* Tue Jan 26 2016 Ben Harper <ben.harper@rackspace.com> - 3.0.7-1.ius
+- Latest upstream
+
 * Mon Dec 21 2015 Carl George <carl.george@rackspace.com> - 3.0.6-1.ius
 - Latest upstream
 
