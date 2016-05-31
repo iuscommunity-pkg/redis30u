@@ -15,7 +15,7 @@
 
 Name:              %{real_name}%{ius_suffix}
 Version:           3.0.7
-Release:           1.ius%{?dist}
+Release:           2.ius%{?dist}
 Summary:           A persistent key-value database
 %if 0%{?rhel} <= 6
 Group:             Applications/Databases
@@ -273,6 +273,9 @@ fi
 
 
 %changelog
+* Tue May 31 2016 Carl George <carl.george@rackspace.com> - 3.0.7-2.ius
+- Fix redis-shutdown to handle password-protected instances shutdown (Fedora)
+
 * Tue Jan 26 2016 Ben Harper <ben.harper@rackspace.com> - 3.0.7-1.ius
 - Latest upstream
 
